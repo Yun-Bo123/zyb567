@@ -1,0 +1,53 @@
+---
+title: "Untitled"
+author: "zyb"
+format: html
+editor: visual
+---
+
+```         
+```
+
+```{r}
+data(Puromycin)
+View(Puromycin)
+library(ggplot2)
+ data("Puromycin")
+ggplot(Puromycin, aes(x = conc, y = rate, color = state)) +
+     geom_point() +
+     geom_line(aes(group = state)) +
+     labs(title = "Reaction Rate vs Concentration",
+        x = "Concentration",
+          y = "Rate") +
+    theme_minimal()
+fm_treated <- nls(rate ~ Vm * conc / (K + conc), 
+                  data = Puromycin, 
+                  subset = (state == "treated"), 
+                  start = list(Vm = 200, K = 0.05))
+fm_untreated <- nls(rate ~ Vm * conc / (K + conc), 
+                    data = Puromycin, 
+                    subset = (state == "untreated"), 
+                    start = list(Vm = 160, K = 0.05))
+summary(fm_treated)
+summary(fm_untreated)
+conc_seq <- seq(0, max(Puromycin$conc), length.out = 100)
+
+plot(Puromycin$rate ~ Puromycin$conc, pch = as.integer(Puromycin$state),
+     col = as.integer(Puromycin$state),
+     xlab = "Concentration (ppm)",
+     ylab = "Reaction Rate (counts/min/min)",
+     main = "Puromycin Data with Michaelis-Menten Fit")
+
+lines(conc_seq, predict(fm_treated, newdata = list(conc = conc_seq)), col = "blue", lwd = 2)
+lines(conc_seq, predict(fm_untreated, newdata = list(conc = conc_seq)), col = "red", lwd = 2)
+
+legend("bottomright", legend = c("treated", "untreated"), col = c("blue", "red"), pch = 1, lwd = 2)
+```
+
+**Data Introduction**
+
+The Puromycin dataset shows how an enzyme’s reaction rate changes with different concentrations of a substance. There are two groups in the data: one group was treated, and the other wasn’t. By looking at this data, we can see how treatment affects the reaction speed.
+
+**How I made the plot**
+
+I used R’s ggplot2 package to make the graph. First, I put concentration on the x-axis and reaction rate on the y-axis. Then, I used different colors to show the treated and untreated groups, so we can easily compare them. I added points to show the actual data and connected points with lines to see the trend clearly.
