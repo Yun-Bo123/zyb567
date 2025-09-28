@@ -1,0 +1,30 @@
+---
+title: "Buyo analysis"
+format: html
+editor: visual
+---
+
+## 
+
+```{r }
+#"fist, read the data"
+data=read.table("C:/Users/Cikey/Desktop/data/44013h2024.txt",header=TRUE)
+head(data)
+#"Then,clean the environment and drop the error data"
+data = data[data$WVHT != 99, ]
+data = data[data$WSPD != 99, ]
+#"try to fit the model,i want to see if the wind speed have relation with the wave height"
+fit = lm(WVHT ~ WSPD, data = data)
+summary(fit)
+library(ggplot2)
+plot(x=data$WSPD,y=data$WVHT,main ="WVHT VS WSPD",pch=16,col="blue" )
+abline(fit,col="red",lwd=2)
+#it seems like the model can't fit the data well, let's see the residual picture"
+plot(fitted(fit), resid(fit),
+     xlab = "Fitted Values",
+     ylab = "Residuals",
+     main = "Residuals vs Fitted")
+abline(h = 0, col = "red", lwd = 2)
+#"From the residuals picture we can see data is symmetrical distributed in the both side of the red line.We can also see this distribution from the 1Q and 3Q value, they are so closed. However, the spread of residuals increases with fitted values,i think it can interpreted by some storms happened. What's more, the r-square is 0.38,i believe for the weather(always hard to predict),we can predict it 38% changes is not a easy work to do.As conclusion,the wind speed and wave height is significantly related,we can say when wind speed increased 1m/s, the wave height will add about 0.14m
+
+```
